@@ -128,6 +128,15 @@ const popConfirm = async (retryTimes = 0) => {
     isOpenResultModal.value = true
     return
   }
+  // ≤1000 聪的输出会被钱包侧的铭文载体保护规则冻结，收款方将无法花费，直接禁止转出
+  if (asset.value.chain === 'btc' && amountInSats.value.lte(1000)) {
+    transactionResult.value = {
+      status: 'warning',
+      message: 'Amount must be greater than 0.00001 BTC (1000 sats).',
+    }
+    isOpenResultModal.value = true
+    return
+  }
   if (symbol.value === 'BTC') {
     if (address.value !== currentBTCWallet.value!.getAddress()) {
       transactionResult.value = {
